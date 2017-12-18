@@ -32,7 +32,7 @@ namespace tor_selden_csharp
 
             for (int i = 1; i <= 50000000; i++)
             {
-                currentPos = (currentPos + steps) % (i );
+                currentPos = (++currentPos + steps) % i;
                 if (currentPos < zeroPos)
                 {
                     zeroPos++;
@@ -41,7 +41,6 @@ namespace tor_selden_csharp
                 {
                     result = i;
                 }
-                currentPos++;
             }
 
             Console.WriteLine(result);
