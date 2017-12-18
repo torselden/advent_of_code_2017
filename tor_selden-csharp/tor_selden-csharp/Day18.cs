@@ -10,19 +10,20 @@ namespace tor_selden_csharp
     class Day18
     {
         static string[] input = File.ReadAllLines(Path.Combine(Program.BasePath, "input18.txt"));
-        static Dictionary<string, int> registers = new Dictionary<string, int>();
-        static int lastPlayedSound = 0;
-        static int globalLastPlayedSound = 0;
-        static int currentCommand = 0;
+        static Dictionary<string, long> registers = new Dictionary<string, long>();
+        static long lastPlayedSound = 0;
+        static long currentCommand = 0;
 
         internal static void A()
         {
             InitializerRegisters();
 
-            while (true)
+            bool done = false;
+
+            while (!done)
             {
-            //for (int i = 0; i < input.Length; i++)
-            //foreach (var item in input)
+                //for (long i = 0; i < input.Length; i++)
+                //foreach (var item in input)
                 var command = input[currentCommand].Split(new[] { ' ' });
 
                 switch (command[0])
@@ -43,7 +44,7 @@ namespace tor_selden_csharp
                         Mod(command[1], command[2]);
                         break;
                     case "rcv":
-                        Rcv(command[1], command[2]);
+                        done = Rcv(command[1]);
                         break;
                     case "jgz":
                         Jgz(command[1], command[2]);
@@ -52,40 +53,49 @@ namespace tor_selden_csharp
                         throw new ExecutionEngineException();
                 }
             }
+            Console.WriteLine(lastPlayedSound);
         }
 
         private static void Jgz(string x, string y)
         {
-            int valueX = 0;
-            int valueY = 0;
+            long valueX = 0;
+            long valueY = 0;
 
-            if (!int.TryParse(x, out valueX))
+            if (!long.TryParse(x, out valueX))
                 valueX = registers[x];
 
             if (!(valueX > 0))
+            {
+                currentCommand++;
                 return;
-            
-            if (!int.TryParse(y, out valueY))
+            }
+
+            if (!long.TryParse(y, out valueY))
                 valueY = registers[y];
 
             currentCommand += valueY;
-
         }
 
-        private static void Rcv(string v1, string v2)
+        private static bool Rcv(string x)
         {
             currentCommand++;
-            if (lastPlayedSound != 0)
-                globalLastPlayedSound = lastPlayedSound;
+            if (!(long.TryParse(x, out long value)))
+                value = registers[x];
 
+            if (value > 0)
+            {
+                //Console.WriteLine(lastPlayedSound);
+                return true;
+            }
+            return false;
         }
 
         private static void Mod(string x, string y)
         {
             currentCommand++;
-            int value = 0;
+            long value = 0;
 
-            if (int.TryParse(y, out value))
+            if (long.TryParse(y, out value))
             {
                 registers[x] = registers[x] % value;
                 return;
@@ -96,9 +106,9 @@ namespace tor_selden_csharp
         private static void Mul(string x, string y)
         {
             currentCommand++;
-            int value = 0;
+            long value = 0;
 
-            if (int.TryParse(y, out value))
+            if (long.TryParse(y, out value))
             {
                 registers[x] *= value;
                 return;
@@ -109,9 +119,9 @@ namespace tor_selden_csharp
         private static void Add(string x, string y)
         {
             currentCommand++;
-            int value = 0;
+            long value = 0;
 
-            if (int.TryParse(y, out value))
+            if (long.TryParse(y, out value))
             {
                 registers[x] += value;
                 return;
@@ -122,9 +132,9 @@ namespace tor_selden_csharp
         private static void Set(string x, string y)
         {
             currentCommand++;
-            int value = 0;
+            long value = 0;
 
-            if (int.TryParse(y, out value))
+            if (long.TryParse(y, out value))
             {
                 registers[x] = value;
                 return;
