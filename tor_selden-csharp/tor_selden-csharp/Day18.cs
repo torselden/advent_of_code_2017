@@ -1,9 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.IO;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace tor_selden_csharp
 {
@@ -11,8 +8,8 @@ namespace tor_selden_csharp
     {
         static string[] input = File.ReadAllLines(Path.Combine(Program.BasePath, "input18.txt"));
         static Dictionary<string, long> registers = new Dictionary<string, long>();
-        static long lastPlayedSound = 0;
-        static long currentCommand = 0;
+        static long lastPlayedSound;
+        static long currentCommand;
 
         internal static void A()
         {
@@ -50,7 +47,7 @@ namespace tor_selden_csharp
                         Jgz(command[1], command[2]);
                         break;
                     default:
-                        throw new ExecutionEngineException();
+                        throw new Exception();
                 }
             }
             Console.WriteLine(lastPlayedSound);
@@ -58,10 +55,7 @@ namespace tor_selden_csharp
 
         private static void Jgz(string x, string y)
         {
-            long valueX = 0;
-            long valueY = 0;
-
-            if (!long.TryParse(x, out valueX))
+            if (!long.TryParse(x, out var valueX))
                 valueX = registers[x];
 
             if (!(valueX > 0))
@@ -70,7 +64,7 @@ namespace tor_selden_csharp
                 return;
             }
 
-            if (!long.TryParse(y, out valueY))
+            if (!long.TryParse(y, out var valueY))
                 valueY = registers[y];
 
             currentCommand += valueY;
@@ -84,7 +78,6 @@ namespace tor_selden_csharp
 
             if (value > 0)
             {
-                //Console.WriteLine(lastPlayedSound);
                 return true;
             }
             return false;
@@ -93,9 +86,8 @@ namespace tor_selden_csharp
         private static void Mod(string x, string y)
         {
             currentCommand++;
-            long value = 0;
 
-            if (long.TryParse(y, out value))
+            if (long.TryParse(y, out var value))
             {
                 registers[x] = registers[x] % value;
                 return;
@@ -106,9 +98,8 @@ namespace tor_selden_csharp
         private static void Mul(string x, string y)
         {
             currentCommand++;
-            long value = 0;
 
-            if (long.TryParse(y, out value))
+            if (long.TryParse(y, out var value))
             {
                 registers[x] *= value;
                 return;
@@ -119,9 +110,8 @@ namespace tor_selden_csharp
         private static void Add(string x, string y)
         {
             currentCommand++;
-            long value = 0;
 
-            if (long.TryParse(y, out value))
+            if (long.TryParse(y, out var value))
             {
                 registers[x] += value;
                 return;
@@ -132,9 +122,8 @@ namespace tor_selden_csharp
         private static void Set(string x, string y)
         {
             currentCommand++;
-            long value = 0;
 
-            if (long.TryParse(y, out value))
+            if (long.TryParse(y, out var value))
             {
                 registers[x] = value;
                 return;
@@ -150,7 +139,6 @@ namespace tor_selden_csharp
 
         private static void InitializerRegisters()
         {
-            //a,i,p,b,f
             registers.Add("a", 0);
             registers.Add("b", 0);
             registers.Add("f", 0);
